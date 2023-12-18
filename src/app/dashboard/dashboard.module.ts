@@ -8,7 +8,6 @@ import { SalesRatioComponent } from "./dashboard-components/sales-ratio/sales-ra
 import { FeedsComponent } from "./dashboard-components/feeds/feeds.component";
 import { TopSellingComponent } from "./dashboard-components/top-selling/top-selling.component";
 import { TopCardsComponent } from "./dashboard-components/top-cards/top-cards.component";
-import { BlogCardsComponent } from "./dashboard-components/blog-cards/blog-cards.component";
 import { CoreModule } from "../core/core.module";
 
 const routes: Routes = [
@@ -36,8 +35,7 @@ const routes: Routes = [
     SalesRatioComponent,
     FeedsComponent,
     TopSellingComponent,
-    TopCardsComponent,
-    BlogCardsComponent
+    TopCardsComponent
   ],
 })
 export class DashboardModule {}

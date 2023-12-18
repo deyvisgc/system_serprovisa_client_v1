@@ -18,7 +18,6 @@ import { ProductoComponent } from './producto/producto.component';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
-import { ComponentsRoutes } from './component.routing';
 const routes: Routes = [
   {
     path: 'admin',
