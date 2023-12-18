@@ -1,0 +1,15 @@
+.ui-dropdown {
+    width: 100%;
+}
+
+.ui-dropdown-panel {
+    width: 100%;
+}
+.custom-dropdown-container {
+    width: 100% !important;
+}
+.datepicker-container {
+    position: absolute;
+    z-index: 1000; /* O un valor adecuado según tu diseño */
+    top: 100%; /* Ajusta según sea necesario para la posición deseada */
+  }

@@ -1,0 +1,136 @@
+<!-- ============================================================== -->
+<!-- Main wrapper - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<div
+  id="main-wrapper"
+  [ngClass]="{ 'show-sidebar': showMobileMenu }"
+  dir="ltr"
+  data-theme="light"
+  data-layout="vertical"
+  [attr.data-sidebartype]="sidebartype"
+  data-sidebar-position="absolute"
+  data-header-position="absolute"
+  data-boxed-layout="full"
+>
+  <!-- ============================================================== -->
+  <!-- Topbar header - style you can find in topbar.scss -->
+  <!-- ============================================================== -->
+  <header class="topbar bg-gradient" data-navbarbg="skin1">
+    <nav class="d-flex top-navbar navbar-expand-lg navbar-dark">
+      <div
+        class="navbar-header"
+        [ngClass]="expandLogo ? 'expand-logo' : ''"
+        data-logobg="skin6"
+      >
+        <!-- This is for the sidebar toggle which is visible on mobile only -->
+        <a
+          (click)="showMobileMenu = !showMobileMenu"
+          class="nav-toggler waves-effect waves-light d-block d-lg-none"
+          href="javascript:void(0)"
+        >
+          <i [ngClass]="showMobileMenu ? 'fas fa-align-left fs-6' : 'fas fa-align-left fs-6'"></i>
+        </a>
+        <!-- ============================================================== -->
+        <!-- Logo -->
+        <!-- ============================================================== -->
+        <div class="d-flex justify-content-center">
+          <a class="navbar-brand" href="javascript:void(0)">
+            <!-- Logo icon -->
+            <!--End Logo icon -->
+            <!-- Logo text -->
+            <span class="logo-text ">
+              <!-- Light Logo text -->
+              <img
+                src="assets/images/logos/serprovisa.jpg"
+                style="width: 150px;height: 50px;"
+                class="dark-logo"
+                alt="homepage"
+              />
+            </span>
+          </a>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- End Logo -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Toggle which is visible on mobile only -->
+        <!-- ============================================================== -->
+        <a
+          class="topbartoggler d-block d-lg-none waves-effect waves-light"
+          href="javascript:void(0)"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          (click)="isCollapsed = !isCollapsed"
+          [attr.aria-expanded]="!isCollapsed"
+        >
+        <i class="fas fa-align-right fs-6"></i>
+        </a>
+      </div>
+      <!-- ============================================================== -->
+      <!-- End Logo -->
+      <!-- ============================================================== -->
+      <div
+        class="navbar-collapse collapse"
+        id="navbarSupportedContent"
+        data-navbarbg="skin1"
+        [ngbCollapse]="!isCollapsed"
+      >
+        <app-navigation
+          (toggleSidebar)="toggleSidebarType()"
+          class="w-100"
+        ></app-navigation>
+      </div>
+    </nav>
+  </header>
+  <!-- ============================================================== -->
+  <!-- Left Sidebar - style you can find in sidebar.scss  -->
+  <!-- ============================================================== -->
+  <aside
+    class="left-sidebar"
+    data-sidebarbg="skin6"
+    (mouseover)="Logo()"
+    (mouseout)="Logo()"
+  >
+      <app-sidebar></app-sidebar>
+  </aside>
+  <!-- ============================================================== -->
+  <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <!-- Page wrapper  -->
+  <!-- ============================================================== -->
+  <div class="page-wrapper">
+    <!-- ============================================================== -->
+    <!-- Container fluid  -->
+    <!-- ============================================================== -->
+    <div class="container-fluid">
+      <!-- ============================================================== -->
+      <!-- Start Page Content -->
+      <!-- ============================================================== -->
+      <router-outlet></router-outlet>
+      <!-- ============================================================== -->
+      <!-- End Start Page Content -->
+      <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- footer -->
+    <!-- ============================================================== -->
+    <!-- <footer class="footer text-center">
+      All Rights Reserved by Monster Admin. Designed and Developed by
+      <a href="https://www.wrappixel.com">WrapPixel</a>.
+    </footer> -->
+    <!-- ============================================================== -->
+    <!-- End footer -->
+    <!-- ============================================================== -->
+  </div>
+  <!-- ============================================================== -->
+  <!-- End Page wrapper  -->
+  <!-- ============================================================== -->
+</div>

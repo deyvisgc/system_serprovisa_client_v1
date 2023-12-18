@@ -1,0 +1,192 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+
+        <h4 class="card-title">Listado de Lineas</h4>
+        <p></p>
+        <div class="d-flex justify-content-between">
+          <div class="form-group">
+            <input type="text" class="form-control" [(ngModel)]="textSearch" id="name" placeholder="Buscar" />
+          </div>
+          
+          <button class="btn btn-info btn-group-lg btn-sm" *ngIf="isRegistrar" (click)="open(content)">Nuevo <i
+              class="fas fa-plus"></i></button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-middle text-nowrap">
+            <thead>
+              <tr>
+                <th class="text-dark font-medium fs-4">#</th>
+                <th class="text-dark font-medium fs-4">Codigo</th>
+                <th class="text-dark font-medium fs-4">Descripcion</th>
+                <th class="text-dark font-medium fs-4">Familia</th>
+                <th class="text-dark font-medium fs-4"  *ngIf="isActualizar || isEliminar">Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf=" list?.registros | search : textSearch as result">
+                <!-- <tr  *ngFor="let items of result | search:textSearch | slice : (currentPage - 1) * totalPages : (currentPage - 1) * totalPages + totalPages; let i = index"> -->
+
+                <tr *ngFor="let item of result | search:textSearch; let i = index">
+                  <td>
+                    {{i + 1}}
+                  </td>
+                  <td>
+                    {{item.cod_line}}
+                  </td>
+                  <td class="fs-4">{{item.des_line}}</td>
+                  <td class="fs-4">{{item.cod_fam}} - {{item.des_fam}}</td>
+                  <td>
+                    <button type="button" *ngIf="isActualizar" (click)="edit(modalActualizar, item.id_line)"
+                      class="btn btn-outline-success w-sm btn-sm" style="margin-left: 5px">
+                      <span><i class="fas fa-edit"></i></span>
+                    </button>
+                    <button type="button" *ngIf="isEliminar" (click)="eliminar(item.id_line)" class="btn w-sm btn-sm btn-outline-danger"
+                      style="margin-left: 5px">
+                      <span><i class="fas fa-trash"></i></span>
+                    </button>
+                  </td>
+                </tr>
+
+              </ng-container>
+            </tbody>
+          </table>
+          <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalRegistros]="totalRegistros"
+            [totalRegistrosPage]="totalRegistroPage" (pageChange)="onPageChange($event)"></app-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Crear Linea</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="getDismissReason(0)"></button>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-danger" *ngIf="errors.length > 0" role="alert">
+      <span *ngFor="let err of errors; let last = last">
+        <span [innerHTML]="'*' + err.mensaje + (last ? '' : '<br>')"></span>
+      </span>
+    </div>
+    <form [formGroup]="formForm" (ngSubmit)="guardar()">
+      <div formArrayName="lineas">
+        <div class="container">
+          <div *ngFor="let linea of lineas.controls; let i = index" [formGroupName]="i">
+            <ng-container *ngIf="linea as lineaFormGroup">
+              <div class="row d-flex justify-content-around">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="inputNombre">Nombre Linea</label>
+                    <input type="text" class="form-control" formControlName="des_line" id="inputNombre"
+                      [ngClass]="{ 'is-invalid': submitted && lineaFormGroup.get('des_line')?.invalid }"
+                      (blur)="addCodigo($event, i)" />
+                    <div *ngIf="submitted && lineaFormGroup.get('des_line')?.invalid" class="invalid-feedback">
+                      <div *ngIf="lineaFormGroup.get('des_line')?.hasError('required')">Nombre es requerido</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="inputCodigo">Codigo Linea</label>
+                    <input type="text" class="form-control" formControlName="cod_line" id="inputCodigo"
+                      [ngClass]="{ 'is-invalid': submitted && lineaFormGroup.get('cod_line')?.invalid }" />
+                    <div *ngIf="submitted && lineaFormGroup.get('cod_line')?.invalid" class="invalid-feedback">
+                      <div *ngIf="lineaFormGroup.get('cod_line')?.hasError('required')">Código es requerido</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">Seleccionar Familia</label>
+                    <div class="custom-dropdown-container">
+                      <ng-select [ngClass]="{ 'is-invalid': submitted && lineaFormGroup.get('id_familia')?.errors }"
+                        [items]="familia" bindLabel="des_fam" formControlName="id_familia" bindValue="id_fam">
+                      </ng-select>
+                      <div *ngIf="submitted && lineaFormGroup.get('id_familia')?.errors" class="invalid-feedback">
+                        <div *ngIf="lineaFormGroup.get('id_familia')?.errors?.['required']">Familia es requerida</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-1">
+                  <div class="form-group">
+                    <button type="button" (click)="eliminarLinea(i)" class="btn w-sm btn-sm btn-outline-danger"
+                      style="margin-top: 25px">
+                      <span><i class="fas fa-trash"></i></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+          <p></p>
+          <button type="button" class="btn btn-outline-success" (click)="agregarLinea()">Agregar Linea</button>
+          <p></p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" [disabled]="isLoading" class="btn btn-outline-info">
+          <span *ngIf="!isLoading"> Guardar</span>
+          <i *ngIf="isLoading" class="fas fa-spinner fa-pulse fa-1x"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+
+</ng-template>
+<ng-template #modalActualizar let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Actualizar Linea</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="formFormUpdate" (ngSubmit)="update()">
+      <div class="row d-flex justify-content-around">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="inputNombre">Nombre Linea</label>
+            <input type="text" class="form-control" formControlName="des_line" id="inputNombre"
+              (blur)="addCodigoUpdate($event)" [ngClass]="{ 'is-invalid': submitted && f.get('des_line')?.invalid }" />
+            <div *ngIf="submitted && f.get('des_line')?.invalid" class="invalid-feedback">
+              <div *ngIf="f.get('des_line')?.hasError('required')">Nombre es requerido</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="inputCodigo">Codigo Linea</label>
+            <input type="text" class="form-control" readonly formControlName="cod_line" id="inputCodigo"
+              [ngClass]="{ 'is-invalid': submitted && f.get('cod_line')?.invalid }" />
+            <div *ngIf="submitted && f.get('cod_line')?.invalid" class="invalid-feedback">
+              <div *ngIf="f.get('cod_line')?.hasError('required')">Código es requerido</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="exampleInputPassword1">Seleccionar Familia</label>
+            <div class="custom-dropdown-container">
+              <ng-select [ngClass]="{ 'is-invalid': submitted && f.get('id_familia')?.errors }" [items]="familia"
+                bindLabel="des_fam" formControlName="id_familia" bindValue="id_fam">
+              </ng-select>
+              <div *ngIf="submitted && f.get('id_familia')?.errors" class="invalid-feedback">
+                <div *ngIf="f.get('id_familia')?.errors?.['required']">Familia es requerida</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p></p>
+      <div class="modal-footer">
+        <button type="submit" [disabled]="isLoading" class="btn btn-outline-info">
+          <span *ngIf="!isLoading"> Guardar</span>
+          <i *ngIf="isLoading" class="fas fa-spinner fa-pulse fa-1x"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+
+</ng-template>

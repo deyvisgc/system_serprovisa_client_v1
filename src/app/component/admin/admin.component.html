@@ -1,0 +1,163 @@
+
+
+<div class="row">
+  <div class="col-12">
+    <div class="card" >
+      <div class="card-body" style="background-color: #fff;">
+
+        <h4 class="card-title">Listado de Responsables</h4>
+        <p></p>
+        <p></p>
+        <div class="d-flex justify-content-between" >
+          <div class="form-group">
+            <input type="text" class="form-control" [(ngModel)]="textSearch" id="name" placeholder="Buscar" />
+          </div>
+          <button class="btn btn-info btn-group-lg btn-sm" (click)="open(content)">Nuevo <i
+              class="fas fa-plus"></i></button>
+        </div>
+        <div class="table-responsive mt-5">
+          <table class="table align-middle text-nowrap ">
+            <thead>
+              <tr>
+                <th class="text-dark font-medium fs-4">Nombre</th>
+                <th class="text-dark font-medium fs-4">Correo</th>
+                <th class="text-dark font-medium fs-4">Rol</th>
+                <!-- <th class="text-dark font-medium fs-4">Estado</th> -->
+                <th class="text-dark font-medium fs-4">Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf=" list?.registros | search : textSearch as result">
+                <!-- <tr  *ngFor="let items of result | search:textSearch | slice : (currentPage - 1) * totalPages : (currentPage - 1) * totalPages + totalPages; let i = index"> -->
+
+                <tr *ngFor="let item of result | search:textSearch; let i = index">
+                  <td>
+                    {{item.us_full_name}}
+                  </td>
+                  <td class="fs-4">{{item.us_username}}</td>
+                  <td>
+                    {{item.ro_name}}
+                  </td>
+                  <td>
+                    <button type="button" (click)="edit(content, item.id_user)"
+                      class="btn btn-outline-success w-sm btn-sm" style="margin-left: 5px">
+                      <span><i class="fas fa-edit"></i></span>
+                    </button>
+                    <button type="button" (click)="eliminar(item.id_user)" class="btn w-sm btn-sm btn-outline-danger"
+                      style="margin-left: 5px">
+                      <span><i class="fas fa-trash"></i></span>
+                    </button>
+                  </td>
+                </tr>
+
+              </ng-container>
+            </tbody>
+          </table>
+          <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalRegistros]="totalRegistros"
+            [totalRegistrosPage]="totalRegistroPage" [totalRegistrosAcomulado]="totalRegistrosAcomulado" (pageChange)="onPageChange($event)"></app-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #content let-modal>
+
+
+
+
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{title}}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="getDismissReason(0)"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      <div class="container mt-1">
+        <div class="row">
+          <h4 style="font-size: 15px; font-weight: 900;">Datos de Acceso</h4>
+          <p></p>
+          <div class="" [ngClass]="{'col-md-3': idUser === 0, 'col-md-4': idUser > 0}">
+            <div class="form-group">
+              <label for="exampleInputName">Nombre </label>
+              <input type="text" formControlName="name" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && f.controls['name'].errors }" id="name"
+                placeholder="Nombre Completo" />
+              <div *ngIf="submitted && f.controls['name'].errors" class="invalid-feedback">
+                <div *ngIf="f.controls['name'].errors?.['required']">Nombre es requerido</div>
+              </div>
+            </div>
+          </div>
+          <div class="" [ngClass]="{'col-md-3': idUser === 0, 'col-md-4': idUser > 0}">
+            <div class="form-group">
+              <label for="exampleInputPassword1">Perfil</label>
+              <div class="custom-dropdown-container">
+                <ng-select [ngClass]="{ 'is-invalid': submitted && f.controls['id_rol'].errors }" [items]="role"
+                  bindLabel="ro_name" formControlName="id_rol" placeholder="Seleccionar Rol" bindValue="id_role">
+                </ng-select>
+                <div *ngIf="submitted && f.controls['id_rol'].errors" class="invalid-feedback">
+                  <div *ngIf="f.controls['id_rol'].errors?.['required']">Rol es requerido</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="" [ngClass]="{'col-md-3': idUser === 0, 'col-md-4': idUser > 0}">
+            <div class="form-group">
+              <label for="exampleInputPassword1">Correo</label>
+              <input type="email" formControlName="email" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && f.controls['email'].errors }" id="email" placeholder="Email" />
+              <div *ngIf="submitted && f.controls['email'].errors" class="invalid-feedback">
+                <div *ngIf="f.controls['email'].errors?.['required']">Correo electronico es requerido</div>
+                <div *ngIf="f.controls['email'].errors?.['email']">correo electrónico debe ser una dirección válida
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group" *ngIf="idUser == 0">
+              <label for="exampleInputPassword1">Contraseña </label>
+              <input type="password" formControlName="password" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && f.controls['password'].errors }" id="password"
+                placeholder="Password" />
+              <div *ngIf="submitted && f.controls['password'].errors" class="invalid-feedback">
+                <div *ngIf="f.controls['password'].errors?.['required']">Password es requerido</div>
+                <div *ngIf="f.controls['password'].errors?.['maxlength']">El maximo de digitos es 20 </div>
+                <div *ngIf="f.controls['password'].errors?.['minlength']">El minimo de digitos es 6 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p></p>
+      <p></p>
+      <hr style="border-radius: 2px solid;">
+      <h4 style="margin-left: 10px; font-size: 15px; font-weight: 900;">Permisos</h4>
+      <p></p>
+      <div ngbAccordion #accordion="ngbAccordion">
+        <div (ngbAccordionItem)="'switch-' + item.id + '-'" *ngFor="let item of permisosArray; let i = index">
+          <h2 ngbAccordionHeader>
+            <button ngbAccordionButton>{{item.descripcion}}</button>
+          </h2>
+          <div ngbAccordionCollapse>
+            <div ngbAccordionBody *ngFor="let p of item?.permisos; ; let is = index">
+              <ng-template >
+                <div class="form-check form-switch" >
+                  <input class="form-check-input"  type="checkbox" (change)="isChecked($event, item.id, p, i)"
+                    role="switch" [id]="'switch-' + item.id + '-' + p.id_permission"  [checked]="p.checked">
+                  <label class="form-check-label">{{p.permission_name}}</label>
+
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p></p>
+      <div class="form-group d-flex justify-content-end">
+        <button type="submit" class="btn btn-outline-info rounded">
+          <span *ngIf="!isLoading">Guardar</span>
+          <i *ngIf="isLoading" class="fas fa-spinner fa-pulse fa-2x"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+
+</ng-template>

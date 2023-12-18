@@ -1,0 +1,165 @@
+<div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+  
+          <h4 class="card-title">Listado de Familias</h4><p></p>
+          <div class="d-flex justify-content-between">
+            <div class="form-group">
+              <input type="text" class="form-control" [(ngModel)]="textSearch" id="name"placeholder="Buscar"/>
+            </div>
+            <button class="btn btn-info btn-group-lg btn-sm" *ngIf="isRegistrar" (click)="open(content)">Nuevo <i
+              class="fas fa-plus"></i></button>
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle text-nowrap">
+              <thead>
+                <tr>
+                  <th class="text-dark font-medium fs-4">#</th>
+                  <th class="text-dark font-medium fs-4">Codigo</th>
+                  <th class="text-dark font-medium fs-4">Descripcion</th>
+                  <!-- <th class="text-dark font-medium fs-4">Estado</th> -->
+                  <th class="text-dark font-medium fs-4" *ngIf="isActualizar || isEliminar">Opciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container
+                *ngIf=" list?.registros | search : textSearch as result">
+                <!-- <tr  *ngFor="let items of result | search:textSearch | slice : (currentPage - 1) * totalPages : (currentPage - 1) * totalPages + totalPages; let i = index"> -->
+  
+                <tr  *ngFor="let item of result | search:textSearch; let i = index">
+                 <td>
+                    {{i + 1}}
+                 </td>
+                  <td>
+                    {{item.cod_fam}}
+                  </td>
+                  <td class="fs-4">{{item.des_fam}}</td>
+                  <td>
+                    <button *ngIf="isActualizar" type="button"(click)="edit(modalActualizar, item.id_fam)" class="btn btn-outline-success w-sm btn-sm" style="margin-left: 5px">
+                      <span><i class="fas fa-edit"></i></span>
+                    </button>
+                    <button type="button" *ngIf="isEliminar" (click)="eliminar(item.id_fam)" class="btn w-sm btn-sm btn-outline-danger" style="margin-left: 5px">
+                      <span><i class="fas fa-trash"></i></span>
+                    </button>
+                  </td>
+                </tr>
+              
+              </ng-container>
+              </tbody>
+            </table>
+            <app-pagination
+            [currentPage]="currentPage"
+            [totalPages]="totalPages"
+            [totalRegistros]="totalRegistros"
+            [totalRegistrosPage]="totalRegistroPage"
+            (pageChange)="onPageChange($event)"
+          ></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Crear Familia</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="getDismissReason(0)"></button>
+    </div>
+    <div class="modal-body">
+        <div class="alert alert-danger" *ngIf="errors.length > 0"  role="alert">
+            <span *ngFor="let err of errors; let last = last">
+                <span [innerHTML]="'*' + err.mensaje + (last ? '' : '<br>')"></span>
+            </span>
+        </div>
+      <form [formGroup]="formForm" (ngSubmit)="guardar()">
+        <div formArrayName="familias">
+           <div class="container">
+                <div *ngFor="let familia of familias.controls; let i = index"  [formGroupName]="i">
+                    <ng-container *ngIf="familia as familiaFormGroup">
+                        <div class="row d-flex justify-content-around">
+                          <div class="col-md-5">
+                            <div class="form-group">
+                              <label for="inputNombre">Nombre Familia</label>
+                              <input type="text" class="form-control text-uppercase" formControlName="descripcion_familia" id="inputNombre"
+                                [ngClass]="{ 'is-invalid': submitted && familiaFormGroup.get('descripcion_familia')?.invalid }" (blur)="addCodigo($event, i)" />
+                              <div *ngIf="submitted && familiaFormGroup.get('descripcion_familia')?.invalid" class="invalid-feedback">
+                                <div *ngIf="familiaFormGroup.get('descripcion_familia')?.hasError('required')">Nombre es requerido</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-5">
+                            <div class="form-group">
+                              <label for="inputCodigo">Codigo Familia</label>
+                              <input type="text" class="form-control text-uppercase" formControlName="codigo_familia" id="inputCodigo"
+                                [ngClass]="{ 'is-invalid': submitted && familiaFormGroup.get('codigo_familia')?.invalid }" />
+                              <div *ngIf="submitted && familiaFormGroup.get('codigo_familia')?.invalid" class="invalid-feedback">
+                                <div *ngIf="familiaFormGroup.get('codigo_familia')?.hasError('required')">Código es requerido</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-2">
+                            <div class="form-group">
+                              <button type="button" (click)="eliminarFamilia(i)" class="btn w-sm btn-sm btn-outline-danger"
+                                style="margin-top: 25px">
+                                <span><i class="fas fa-trash"></i></span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-container>
+                </div>
+                <p></p>
+                <button type="button" class="btn btn-outline-success" (click)="agregarFamilia()">Agregar Familia</button>
+                <p></p>
+                </div>
+           </div>
+           <div class="modal-footer">
+            <button type="submit" class="btn btn-outline-info" >
+              <span *ngIf="!isLoading"> Guardar</span>
+              <i *ngIf="isLoading" class="fas fa-spinner fa-pulse fa-1x"></i>
+            </button>
+            </div>
+      </form>
+    </div>
+  
+  </ng-template>
+  <ng-template #modalActualizar let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Actualizar Familia</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="formFormUpdate" (ngSubmit)="update()">
+        <div class="row d-flex justify-content-around">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="inputNombre">Nombre Familia</label>
+                <input type="text" class="form-control text-uppercase" formControlName="descripcion_familia" id="inputNombre" (blur)="addCodigoUpdate($event)"
+                  [ngClass]="{ 'is-invalid': submitted && f.get('descripcion_familia')?.invalid }" />
+                <div *ngIf="submitted && f.get('descripcion_familia')?.invalid" class="invalid-feedback">
+                  <div *ngIf="f.get('descripcion_familia')?.hasError('required')">Nombre es requerido</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="inputCodigo">Codigo Familia</label>
+                <input type="text" class="form-control text-uppercase" readonly formControlName="codigo_familia" id="inputCodigo"
+                  [ngClass]="{ 'is-invalid': submitted && f.get('codigo_familia')?.invalid }" />
+                <div *ngIf="submitted && f.get('codigo_familia')?.invalid" class="invalid-feedback">
+                  <div *ngIf="f.get('codigo_familia')?.hasError('required')">Código es requerido</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p></p>
+           <div class="modal-footer">
+            <button type="submit" [disabled]="isLoading" class="btn btn-outline-info" >
+              <span *ngIf="!isLoading"> Guardar</span>
+              <i *ngIf="isLoading" class="fas fa-spinner fa-pulse fa-2x"></i>
+            </button>
+            </div>
+      </form>
+    </div>
+  </ng-template>
+  <ng-template #successTpl> I'm a success toast </ng-template>
