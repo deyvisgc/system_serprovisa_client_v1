@@ -1,4 +1,4 @@
-# MonsterAngularLite
+# Sistema de Control de Asignaciones de Productos Empresa SERPROVISA
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.1.
 
