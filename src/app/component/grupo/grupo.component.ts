@@ -210,8 +210,15 @@ export class GrupoComponent {
   }
   getLineaByIdFamiliaCreate(event: any, index: number) {
     const grupoFormGroup = this.grupos.at(index) as FormGroup;
-    grupoFormGroup.get('des_fam')?.setValue(event.des_fam);
-    this.getLineByIdFamilia(event.id_fam);
+    if (event) {
+      grupoFormGroup.get('des_fam')?.setValue(event.des_fam);
+      this.getLineByIdFamilia(event.id_fam);
+    } else {
+      grupoFormGroup.get('id_linea')?.setValue(null);
+      this.linea = []
+      this.formFormUpdate.patchValue({ id_linea: null});
+    }
+
   }
   getLineaByIdFamiliaUpdate(event: any) {
     this.getLineByIdFamilia(event.id_fam);
@@ -220,7 +227,6 @@ export class GrupoComponent {
     this.lineaService.getByIdFamilia(id).subscribe({
       next: (res: any) => {
         this.linea = res;
-        this.formFormUpdate.patchValue({ id_linea: 0 });
       },
       error: (err: any) => {
         this.totastService.error(err)
@@ -241,7 +247,9 @@ export class GrupoComponent {
     this.lineaService.getAll(10000, 0, 1).subscribe({
       next: (res: any) => {
         this.lineaFilters = res?.registros;
-        this.linea = res?.registros;
+        if (this.idGrupo > 0) {
+          this.linea = res?.registros;
+        }
       },
       error: (err: any) => {
         this.totastService.error(err)
