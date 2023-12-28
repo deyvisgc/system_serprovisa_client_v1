@@ -1,6 +1,6 @@
 <nav aria-label="Page navigation example">
-  <div class="d-flex justify-content-between">
-    <span> mostrando {{totalRegistrosPage}} de {{totalRegistrosAcomulado}} de {{totalRegistros}} registros</span>
+  <div class="d-flex justify-content-end">
+    <!-- <span> mostrando {{totalRegistrosPage}} de {{totalRegistrosAcomulado}} de {{totalRegistros}} registros</span> -->
     <ul class="pagination">
       <li class="page-item" [class.disabled]="currentPage === 1">
         <a class="page-link" (click)="changePage(currentPage - 1)" aria-label="Previous">

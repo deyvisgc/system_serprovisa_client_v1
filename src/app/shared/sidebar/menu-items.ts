@@ -49,8 +49,17 @@ export const ROUTES: RouteInfo[] = [
     submenu: []
   },
   {
+    path: '/system/component/create-product',
+    title: 'Creaciòn de Productos',
+    icon: 'fas fa-layer-group',
+    class: '',
+    extralink: false,
+    role: rolePublicAll,
+    submenu: []
+  },
+  {
     path: '/system/component/asignar-product',
-    title: 'Asignacion Producto',
+    title: 'Listado de Productos',
     icon: 'fas fa-box',
     class: '',
     extralink: false,

@@ -79,7 +79,20 @@
               <div class="row d-flex justify-content-around">
                 <div class="col-md-4">
                   <div class="form-group">
-                    <label for="inputNombre">Nombre Linea</label>
+                    <label for="exampleInputPassword1">Seleccionar Familia</label>
+                    <div class="custom-dropdown-container">
+                      <ng-select [ngClass]="{ 'is-invalid': submitted && lineaFormGroup.get('id_familia')?.errors }"
+                        [items]="familia" bindLabel="des_fam" formControlName="id_familia" bindValue="id_fam">
+                      </ng-select>
+                      <div *ngIf="submitted && lineaFormGroup.get('id_familia')?.errors" class="invalid-feedback">
+                        <div *ngIf="lineaFormGroup.get('id_familia')?.errors?.['required']">Familia es requerida</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="inputNombre">Nombre</label>
                     <input type="text" class="form-control" formControlName="des_line" id="inputNombre"
                       [ngClass]="{ 'is-invalid': submitted && lineaFormGroup.get('des_line')?.invalid }"
                       (blur)="addCodigo($event, i)" />
@@ -90,24 +103,11 @@
                 </div>
                 <div class="col-md-3">
                   <div class="form-group">
-                    <label for="inputCodigo">Codigo Linea</label>
+                    <label for="inputCodigo">Codigo</label>
                     <input type="text" class="form-control" formControlName="cod_line" id="inputCodigo"
                       [ngClass]="{ 'is-invalid': submitted && lineaFormGroup.get('cod_line')?.invalid }" />
                     <div *ngIf="submitted && lineaFormGroup.get('cod_line')?.invalid" class="invalid-feedback">
                       <div *ngIf="lineaFormGroup.get('cod_line')?.hasError('required')">Código es requerido</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Seleccionar Familia</label>
-                    <div class="custom-dropdown-container">
-                      <ng-select [ngClass]="{ 'is-invalid': submitted && lineaFormGroup.get('id_familia')?.errors }"
-                        [items]="familia" bindLabel="des_fam" formControlName="id_familia" bindValue="id_fam">
-                      </ng-select>
-                      <div *ngIf="submitted && lineaFormGroup.get('id_familia')?.errors" class="invalid-feedback">
-                        <div *ngIf="lineaFormGroup.get('id_familia')?.errors?.['required']">Familia es requerida</div>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -147,7 +147,20 @@
       <div class="row d-flex justify-content-around">
         <div class="col-md-4">
           <div class="form-group">
-            <label for="inputNombre">Nombre Linea</label>
+            <label for="exampleInputPassword1">Seleccionar Familia</label>
+            <div class="custom-dropdown-container">
+              <ng-select [ngClass]="{ 'is-invalid': submitted && f.get('id_familia')?.errors }" [items]="familia"
+                bindLabel="des_fam" formControlName="id_familia" bindValue="id_fam">
+              </ng-select>
+              <div *ngIf="submitted && f.get('id_familia')?.errors" class="invalid-feedback">
+                <div *ngIf="f.get('id_familia')?.errors?.['required']">Familia es requerida</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="inputNombre">Nombre</label>
             <input type="text" class="form-control" formControlName="des_line" id="inputNombre"
               (blur)="addCodigoUpdate($event)" [ngClass]="{ 'is-invalid': submitted && f.get('des_line')?.invalid }" />
             <div *ngIf="submitted && f.get('des_line')?.invalid" class="invalid-feedback">
@@ -157,24 +170,11 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label for="inputCodigo">Codigo Linea</label>
-            <input type="text" class="form-control" readonly formControlName="cod_line" id="inputCodigo"
+            <label for="inputCodigo">Codigo</label>
+            <input type="text" class="form-control" formControlName="cod_line" id="inputCodigo"
               [ngClass]="{ 'is-invalid': submitted && f.get('cod_line')?.invalid }" />
             <div *ngIf="submitted && f.get('cod_line')?.invalid" class="invalid-feedback">
               <div *ngIf="f.get('cod_line')?.hasError('required')">Código es requerido</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group">
-            <label for="exampleInputPassword1">Seleccionar Familia</label>
-            <div class="custom-dropdown-container">
-              <ng-select [ngClass]="{ 'is-invalid': submitted && f.get('id_familia')?.errors }" [items]="familia"
-                bindLabel="des_fam" formControlName="id_familia" bindValue="id_fam">
-              </ng-select>
-              <div *ngIf="submitted && f.get('id_familia')?.errors" class="invalid-feedback">
-                <div *ngIf="f.get('id_familia')?.errors?.['required']">Familia es requerida</div>
-              </div>
             </div>
           </div>
         </div>

@@ -18,7 +18,9 @@ import { FamilyService } from '../service/family.service';
 import * as dayjs from 'dayjs';
 import { Filtros } from 'src/app/core/interface/filtros.request';
 import { TokenService } from 'src/app/util/token.service';
+import { ProductoRequest } from 'src/app/core/interface/producto.request';
 import { ProductoService } from '../service/producto.service';
+import { NavigationExtras, Router } from '@angular/router';
 import { AdminService } from '../service/admin.service';
 import { PermisoConstante } from 'src/app/util/ModuloConstante';
 import { CommonService } from 'src/app/core/service/common.service';
@@ -38,8 +40,10 @@ export class GrupoComponent {
   linea: any[] = [];
   lineaFilters: any[] = [];
   familia: any[] = [];
+  selectedCar: number;
   formForm: FormGroup;
   formFormUpdate: FormGroup;
+  formFormProducto: FormGroup;
   submitted = false;
   isLoading = false;
   totalRegistros = 0;
@@ -51,13 +55,18 @@ export class GrupoComponent {
   textSearch: string = '';
   errors: any[] = [];
   idGrupo: number;
+  idGrupoProducto: number = 0;
   isCollapsed = true;
   idLinea = 0;
   idFamilia = 0;
+  codigoConjunto: string = '';
+  totalProducto: number = 0;
   permisos: any[] = []
   isRegistrar: boolean = true
   isActualizar: boolean = true
   isEliminar: boolean = true
+  isVerProductos: boolean = true
+  isAsignarProductos: boolean = true
   filtros: Filtros = {
     fecha_ini: {
       year: dayjs().subtract(1, 'month').year(),
@@ -79,6 +88,9 @@ export class GrupoComponent {
     private formBuilder: FormBuilder,
     private totastService: NotificationService,
     private grupoService: GrupoService,
+    private tokenService: TokenService,
+    private productoService: ProductoService,
+    private router: Router,
     config: NgbModalConfig,
     private adminService: AdminService,
     private commonService: CommonService
@@ -99,6 +111,9 @@ export class GrupoComponent {
     this.formForm = this.formBuilder.group({
       grupos: this.formBuilder.array([]),
     });
+    this.formFormProducto = this.formBuilder.group({
+      productos: this.formBuilder.array([]),
+    });
     this.formFormUpdate = this.formBuilder.group({
       des_gru: ['', Validators.required],
       cod_gru: ['', Validators.required],
@@ -108,6 +123,9 @@ export class GrupoComponent {
   }
   get grupos() {
     return this.formForm.get('grupos') as FormArray;
+  }
+  get productos() {
+    return this.formFormProducto.get('productos') as FormArray;
   }
   toggleCollapse() {
     this.isCollapsed = !this.isCollapsed;
@@ -123,8 +141,37 @@ export class GrupoComponent {
     });
     this.grupos.push(nuevaFamilia);
   }
+  addProducto() {
+    if (this.productos.length > 9) {
+      this.totastService.warning('Solo se permite agregar 10 productos');
+      return;
+    }
+    this.totalProducto += 1;
+    let codProducto = '';
+    if (this.totalProducto < 10) {
+      codProducto = `00${this.totalProducto}`;
+    } else if (this.totalProducto < 99 && this.totalProducto > 9) {
+      codProducto = `0${this.totalProducto}`;
+    } else {
+      codProducto = `${this.totalProducto}`;
+    }
+    const nuevoProducto = this.formBuilder.group({
+      cod_product: [
+        `${this.codigoConjunto}-${codProducto}`,
+        Validators.required,
+      ],
+      name_product: ['', Validators.required],
+      des_product: [null, Validators.required],
+      id_grupo: [this.idGrupoProducto, Validators.required],
+      id_user: [this.tokenService.decodeToken().id, Validators.required],
+    });
+    this.productos.push(nuevoProducto);
+  }
   eliminarGrupo(index: number) {
     this.grupos.removeAt(index);
+  }
+  eliminarProducto(index: number) {
+    this.productos.removeAt(index);
   }
   guardar() {
     if (this.grupos.length == 0) {
@@ -175,6 +222,7 @@ export class GrupoComponent {
   getDismissReason(reason: any): string {
     switch (reason) {
       case ModalDismissReasons.BACKDROP_CLICK:
+        this.productos.clear();
         this.grupos.clear();
         this.errors = [];
         this.modalService.dismissAll();
@@ -272,7 +320,7 @@ export class GrupoComponent {
               this.totastService.success(res.message);
             },
             error: (err: any) => {
-              this.totastService.error(err.error);
+              this.totastService.error(err.error.error);
             },
             complete: () => {
               this.getGrupo();
@@ -408,6 +456,58 @@ export class GrupoComponent {
     const lineaFormGroup = this.grupos.at(index) as FormGroup;
     lineaFormGroup.get('des_line')?.setValue(event.des_line);
   }
+  guardarProducto() {
+    this.submitted = true;
+    if (this.productos.length == 0) {
+      this.totastService.error('Se requiero minimo 1 producto para registrar');
+      return;
+    }
+    if (this.formFormProducto.invalid) {
+      return;
+    }
+    this.isLoading = true
+    const producto = this.formFormProducto.value.productos as ProductoRequest[];
+
+    this.productoService.register(producto).subscribe({
+      next: (res: any) => {
+        this.totastService.success(res.message);
+        this.formFormProducto.reset();
+        this.modalService.dismissAll();
+        this.errors = [];
+        this.isLoading = false
+      },
+      error: (err: any) => {
+        if (err.statusCode !== 409) {
+          this.totastService.error(err.error);
+        } else {
+          this.errors = err.message;
+        }
+        this.isLoading = false
+      },
+      complete: () => {
+        this.submitted = false;
+        this.getGrupo();
+        this.productos.clear();
+      },
+    });
+  }
+  agregarProducto(model: any, item: any) {
+    this.codigoConjunto = item.cod_gru_final;
+    this.totalProducto = item.total_product;
+    this.idGrupoProducto = item.id_grou;
+    this.modalService.open(model, { size: 'xl' });
+  }
+  verProducto(id: number) {
+    const obj = {
+      id: id,
+      type: 'group',
+    };
+    const navigationExtra: NavigationExtras = { state: obj };
+    this.router.navigate(
+      ['system/component/asignar-product/'],
+      navigationExtra
+    );
+  }
   obtenerPermisos() {
     this.adminService.datos$.subscribe(res => {
       if (res?.length > 0 ) {
@@ -415,6 +515,8 @@ export class GrupoComponent {
         this.isRegistrar = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_AGREGAR)
         this.isActualizar = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_ACTUALIZAR)
         this.isEliminar = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_ELIMINAR)
+        this.isAsignarProductos = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_ASIGNAR_PRODUCTO)
+        this.isVerProductos = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_VER_PRODUCTO)
       }
     });
   }
