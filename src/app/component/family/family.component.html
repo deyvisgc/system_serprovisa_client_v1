@@ -144,7 +144,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="inputCodigo">Codigo Familia</label>
-                <input type="text" class="form-control text-uppercase" readonly formControlName="codigo_familia" id="inputCodigo"
+                <input type="text" class="form-control text-uppercase" formControlName="codigo_familia" id="inputCodigo"
                   [ngClass]="{ 'is-invalid': submitted && f.get('codigo_familia')?.invalid }" />
                 <div *ngIf="submitted && f.get('codigo_familia')?.invalid" class="invalid-feedback">
                   <div *ngIf="f.get('codigo_familia')?.hasError('required')">Código es requerido</div>

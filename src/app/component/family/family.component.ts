@@ -175,7 +175,11 @@ export class FamilyComponent {
               this.totastService.success(res.message);
             },
             error: (err: any) => {
-              this.totastService.error(err.error.error);
+              if (err.statusCode === 409) {
+                this.totastService.error(err.error);
+              } else {
+                this.totastService.error(err.message);
+              }
             },
             complete: () => {
               this.getFamily();

@@ -453,7 +453,7 @@ export class CrearProductoComponent {
               if (err.statusCode === 409) {
                 this.totastService.error(err.error);
               } else {
-                this.errors = err.message;
+                this.totastService.error(err.message);
               }
             },
             complete: () => {

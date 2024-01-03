@@ -280,7 +280,6 @@ export class ProductoComponent implements OnInit {
       },
     });
   }
-  eliminar(id: number) {}
   onPageChange(event: { page: number; limit: number; offset: number }): void {
     this.currentPage = event.page;
     this.getList(event.limit, event.offset, this.currentPage);
