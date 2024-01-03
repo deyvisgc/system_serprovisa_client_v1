@@ -46,8 +46,12 @@ export class GrupoService {
       .append('fecha_ini', fecha_ini)
       .append('fecha_fin', fecha_fin)
       .append('familia', filtros.famila)
+      .append('grupo', filtros.grupo || '')
       .append('linea', filtros.linea);
     return this.http.get(UriConstante.GRUPO_RESORCE, { params: params });
+  }
+  getAllFilters(): Observable<any> {
+    return this.http.get(`${UriConstante.GRUPO_RESORCE}/filters`);
   }
   getById(id: number): Observable<any> {
     return this.http.get<any>(UriConstante.GRUPO_RESORCE + `/${id}`);

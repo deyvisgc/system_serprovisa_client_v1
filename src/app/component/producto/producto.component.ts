@@ -38,15 +38,10 @@ export class ProductoComponent implements OnInit {
   closeResult = '';
   filterValue = '';
   list: List;
-  lineaFilter: any[] = [];
   linea: any[] = [];
   familia: any[] = [];
   grupo: any[] = [];
-  lineaFilters: any[] = [];
-  familiaFilters: any[] = [];
-  grupoFilters: any[] = [];
   responsables: any[] = [];
-  formFormProducto: FormGroup;
   formUpdateForm: FormGroup;
   submitted = false;
   isLoading = false;
@@ -61,11 +56,6 @@ export class ProductoComponent implements OnInit {
   idGrupoProducto: number = 0;
   isCollapsed = true;
   idProducto = 0;
-  codigoConjunto: string = '';
-  totalProducto: number = 0;
-  totalProductoTemp: number = 0;
-  codGrupoTemp: string = '';
-  codigoProducts: any[] = [];
   url: any;
   filtros: FiltrosProducto = {
     fecha_ini: {
@@ -83,16 +73,8 @@ export class ProductoComponent implements OnInit {
     grupo: '',
     user: '',
   };
-  filtrosGrupo: Filtros = {
-    fecha_ini: { year: 0, month: 0, day: 0 },
-    fecha_fin: { year: 0, month: 0, day: 0 },
-    famila: '',
-    linea: '',
-  };
   permisos: any[] = []
-  isRegistrar: boolean = true
   isActualizar: boolean = true
-  isEliminar: boolean = true
   constructor(
     private lineaService: LineaService,
     private familaService: FamilyService,
@@ -101,7 +83,6 @@ export class ProductoComponent implements OnInit {
     private grupoService: GrupoService,
     private productoService: ProductoService,
     private adminService: AdminService,
-    private tokenService: TokenService,
     private router: Router,
     config: NgbModalConfig,
     private commonService: CommonService
@@ -144,7 +125,6 @@ export class ProductoComponent implements OnInit {
   getDismissReason(reason: any): string {
     switch (reason) {
       case ModalDismissReasons.BACKDROP_CLICK:
-        this.productos.clear();
         this.modalService.dismissAll();
         return 'by clicking on a backdrop';
       default:
@@ -152,9 +132,6 @@ export class ProductoComponent implements OnInit {
     }
   }
   inicializarFormulario() {
-    this.formFormProducto = this.formBuilder.group({
-      productos: this.formBuilder.array([]),
-    });
     this.formUpdateForm = this.formBuilder.group({
       name_product: ['', Validators.required],
       des_product: ['', Validators.required],
@@ -248,7 +225,7 @@ export class ProductoComponent implements OnInit {
   getLinea() {
     this.lineaService.getAll(10000, 0, 1).subscribe({
       next: (res: any) => {
-        this.lineaFilter = res?.registros;
+        this.linea = res?.registros;
       },
       error: (err: any) => {
         this.totastService.error(err)
@@ -258,7 +235,7 @@ export class ProductoComponent implements OnInit {
   getFamilia() {
     this.familaService.getAll(10000, 0, 1).subscribe({
       next: (res: any) => {
-        this.familiaFilters = res?.registros;
+        this.familia = res?.registros;
         this.familia = res?.registros;
       },
       error: (err: any) => {
@@ -267,9 +244,9 @@ export class ProductoComponent implements OnInit {
     });
   }
   getGrupo() {
-    this.grupoService.getAll(10000, 0, 1, this.filtrosGrupo).subscribe({
+    this.grupoService.getAllFilters().subscribe({
       next: (res: any) => {
-        this.grupoFilters = res?.registros;
+        this.grupo = res?.registros;
       },
       error: (err: any) => {
         this.totastService.error(err)
@@ -308,130 +285,6 @@ export class ProductoComponent implements OnInit {
     this.currentPage = event.page;
     this.getList(event.limit, event.offset, this.currentPage);
   }
-  guardar() {
-    if (this.productos.length == 0) {
-      this.totastService.error('Se requiere minimo 1 producto para registrar');
-      return;
-    }
-    this.submitted = true;
-    if (this.productos.length > 0) {
-      if (this.formFormProducto.invalid) {
-        return;
-      }
-      this.isLoading = true
-      const producto = this.formFormProducto.value
-        .productos as ProductoRequest[];
-
-      this.productoService.registerMaivo(producto).subscribe({
-        next: (res: any) => {
-          this.totastService.success(res.message);
-          this.formFormProducto.reset();
-          this.modalService.dismissAll();
-          this.errors = [];
-          this.codigoProducts = [];
-          this.isLoading = false
-        },
-        error: (err: any) => {
-          if (err.statusCode !== 409) {
-            this.totastService.error(err.error);
-          } else {
-            this.errors = err.message;
-          }
-          this.isLoading = false
-        },
-        complete: () => {
-          this.submitted = false;
-          this.getProducto();
-          this.productos.clear();
-        },
-      });
-    }
-  }
-  get productos() {
-    return this.formFormProducto.get('productos') as FormArray;
-  }
-  addProducto() {
-    if (this.productos.length > 2) {
-      this.totastService.warning('Solo se permite asignar 3 productos');
-      return;
-    }
-    const nuevoProducto = this.formBuilder.group({
-      familia: [null, Validators.required],
-      line: [null, Validators.required],
-      grupo: [null, Validators.required],
-      cod_product: [null, Validators.required],
-      name_product: ['', Validators.required],
-      des_product: [null, Validators.required],
-      id_grupo: [null, Validators.required],
-      id_user: [this.tokenService.decodeToken().id, Validators.required],
-    });
-    this.productos.push(nuevoProducto);
-  }
-  eliminarProducto(index: number) {
-    this.productos.removeAt(index);
-  }
-  getLineByIdFamilia(event: any) {
-    this.lineaService.getByIdFamilia(event.id_fam).subscribe({
-      next: (res: any) => {
-        this.linea = res;
-      },
-      error: (err: any) => {
-        this.totastService.error(err)
-      },
-    });
-  }
-  getGrupoByIdLinea(event: any) {
-    this.grupoService.getByIdLinea(event.id_line).subscribe({
-      next: (res: any) => {
-        this.grupo = res;
-      },
-      error: (err: any) => {
-        this.totastService.error(err)
-      },
-    });
-  }
-  addCodigoProducto(event: any, index: number) {
-    let codProducto = '';
-    const productoFormGroup = this.productos.at(index) as FormGroup;
-    let total_product = 0;
-    if (index === 0) {
-      total_product = event.total_product;
-      total_product += 1;
-    } else {
-      const codigo = this.codigoProducts.find(
-        (cod: any) => cod === event.cod_gru_final
-      );
-      if (codigo) {
-        const productosFiltrados = this.productos.controls.find(
-          (productoFormGroup: any) =>
-            productoFormGroup.value.cod_product !== null &&
-            productoFormGroup.value.cod_product.startsWith(codigo)
-        );
-        if (productosFiltrados) {
-          const codigoSinNumeros =
-            productosFiltrados.value.cod_product.split('-');
-          total_product = parseInt(codigoSinNumeros[3], 10) + 1;
-        }
-      } else {
-        total_product = event.total_product;
-        total_product += 1;
-      }
-    }
-
-    if (total_product < 10) {
-      codProducto = `00${total_product}`;
-    } else if (total_product < 99 && total_product > 9) {
-      codProducto = `0${total_product}`;
-    } else {
-      codProducto = `${total_product}`;
-    }
-    this.totalProductoTemp = total_product;
-    productoFormGroup
-      .get('cod_product')
-      ?.setValue(`${event.cod_gru_final}-${codProducto}`);
-    productoFormGroup.get('id_grupo')?.setValue(event.id_grou);
-    this.codigoProducts.push(event.cod_gru_final);
-  }
   update() {
     this.submitted = true;
     if (this.formUpdateForm.invalid) {
@@ -461,9 +314,7 @@ export class ProductoComponent implements OnInit {
     this.adminService.datos$.subscribe(res => {
       if (res?.length > 0 ) {
         this.permisos = res?.filter((p: any) => p.modulo === PermisoConstante.MODULO_PRODUCTO)
-        this.isRegistrar = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_AGREGAR)
         this.isActualizar = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_ACTUALIZAR)
-        // this.isEliminar = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_ELIMINAR)
       }
     });
   }

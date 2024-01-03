@@ -1,0 +1,349 @@
+<div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+  
+          <h4 class="card-title">Asignacion de Productos</h4>
+          <p></p>
+          <div class="d-flex justify-content-between">
+            <button class="btn btn-info btn-group-lg btn-sm" (click)="toggleCollapse()" [attr.aria-expanded]="isCollapsed"
+              aria-controls="collapseExample">Filtros Avanzados </button>
+            <button class="btn btn-outline-danger btn-group-lg btn-sm" *ngIf="!isCollapsed"
+              aria-controls="collapseExample" (click)="clearFilter()">Limpiar <i class="fas fa-eraser"></i></button>
+          </div>
+          <p></p>
+          <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed" style="border-radius: 1px solid;">
+            <div class="card">
+              <div class="row">
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="inputNombre">Fecha Inicio</label>
+                    <div class="input-group">
+                      <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="filtros.fecha_ini"
+                        ngbDatepicker #dateIni="ngbDatepicker" />
+                      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="dateIni.toggle()"
+                        type="button"></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="inputNombre">Fecha Fin</label>
+                    <div class="input-group">
+                      <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="filtros.fecha_fin"
+                        (dateSelect)="onSearchDate()" ngbDatepicker #dateFin="ngbDatepicker" />
+                      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="dateFin.toggle()"
+                        type="button"></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="custom-dropdown-container">
+                    <div class="form-group">
+                      <label for="inputNombre">Buscar por Familia</label>
+                      <div class="input-group">
+                        <ng-select [items]="familia" (change)="onSearchFamily()" [(ngModel)]="filtros.famila"
+                          [style.width.px]="300" bindLabel="des_fam" bindValue="id_fam" placeholder="Seleccionar Familia">
+                        </ng-select>
+                      </div>
+                    </div>
+                  </div>
+  
+                </div>
+                <div class="col-md-3">
+                  <div class="custom-dropdown-container">
+                    <div class="form-group">
+                      <label for="inputNombre">Buscar por Linea</label>
+                      <div class="input-group">
+                        <ng-select [items]="lineaFilters" (change)="onSearchLine()" [(ngModel)]="filtros.linea"
+                          [style.width.px]="300" bindLabel="des_line" bindValue="id_line" placeholder="Seleccionar Linea">
+                        </ng-select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="custom-dropdown-container">
+                    <div class="form-group">
+                      <label for="inputNombre">Grupo</label>
+                      <div class="input-group">
+                        <ng-select [items]="grupoFilters" (change)="onSearchGrupo()" [(ngModel)]="filtros.grupo"
+                          [style.width.px]="200" bindLabel="des_gru" bindValue="id_grou">
+                        </ng-select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between">
+            <div class="form-group">
+              <input type="text" class="form-control" [(ngModel)]="textSearch" id="name" placeholder="Buscar" />
+            </div>
+            <button class="btn btn-outline-info btn-group-lg btn-sm" *ngIf="isRegistrar" (click)="open(modalAgregarProducto)">Nuevo <i
+              class="fas fa-plus"></i></button>
+            <!-- <div class="d-inline-block" ngbDropdown #myDrop="ngbDropdown">
+              <button type="button" class="btn btn-outline-info me-2" id="dropdownManual" ngbDropdownAnchor
+                (focus)="myDrop.open()">
+                Operaciones
+              </button>
+              <div ngbDropdownMenu aria-labelledby="dropdownManual">
+                <button ngbDropdownItem (click)="open(modalAgregarProducto)" *ngIf="isRegistrar"> Nuevo Producto</button>
+                <button (click)="exportarExcel()" ngbDropdownItem>Exportar Excel</button>
+                <button (click)="exportarPdf()" ngbDropdownItem>Exportar Pdf</button>
+              </div>
+            </div> -->
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle text-nowrap">
+              <thead>
+                <tr>
+                  <th class="text-dark font-medium fs-4">#</th>
+                  <th class="text-dark font-medium fs-4">Familia</th>
+                  <th class="text-dark font-medium fs-4">Linea</th>
+                  <th class="text-dark font-medium fs-4">Grupo</th>
+                  <th class="text-dark font-medium fs-4">Codigo en Conjunto</th>
+                  <th class="text-dark font-medium fs-4">Total Producto</th>
+                  <th class="text-dark font-medium fs-4">Fecha Registro</th>
+                  <th class="text-dark font-medium fs-4"
+                    *ngIf="isActualizar || isEliminar || isAsignarProductos || isVerProductos">Opciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngIf=" list?.registros | search : textSearch as result">
+                  <!-- <tr  *ngFor="let items of result | search:textSearch | slice : (currentPage - 1) * totalPages : (currentPage - 1) * totalPages + totalPages; let i = index"> -->
+  
+                  <tr *ngFor="let item of result | search:textSearch; let i = index">
+                    <td>
+                      {{i + 1}}
+                    </td>
+                    <td class="fs-4">{{item.cod_fam}} - {{item.des_fam}}</td>
+                    <td class="fs-4">{{item.cod_line}} - {{item.des_line}}</td>
+                    <td class="fs-4">{{item.cod_gru}} - {{item.des_gru}} </td>
+                    <td class="fs-4">{{item.cod_gru_final}} </td>
+                    <td class="fs-4">{{item.total_product}} </td>
+                    <td class="fs-4">{{item.fec_regis | date:"shortDate"}}</td>
+                    <td>
+                      <!-- <button type="button" ngbTooltip="Actualizar Grupo" *ngIf="isActualizar"
+                        (click)="edit(modalActualizar, item.id_grou)" class="btn btn-outline-success w-sm btn-sm"
+                        style="margin-left: 5px">
+                        <span><i class="fas fa-edit"></i></span>
+                      </button> -->
+                      <button type="button" ngbTooltip="Eliminar Grupo" *ngIf="isEliminar"
+                        (click)="eliminar(item.id_grou)" class="btn w-sm btn-sm btn-outline-danger"
+                        style="margin-left: 5px">
+                        <span><i class="fas fa-trash"></i></span>
+                      </button>
+                      <button type="button" ngbTooltip="Asignar Producto"
+                        (click)="agregarProducto(modalAgregarOneGrupoProducto, item)" *ngIf="isAsignarProductos"
+                        class="btn btn-outline-info w-sm btn-sm" style="margin-left: 5px">
+                        <span><i class="fas fa-plus"></i></span>
+                      </button>
+                      <button type="button" ngbTooltip="Ver Productos" *ngIf="isVerProductos"
+                        (click)="verProducto(item.id_grou)" class="btn w-sm btn-sm btn-outline-warning"
+                        style="margin-left: 5px">
+                        <span><i class="fas fa-eye"></i></span>
+                      </button>
+                    </td>
+                  </tr>
+  
+                </ng-container>
+              </tbody>
+            </table>
+            <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalRegistros]="totalRegistros"
+              [totalRegistrosPage]="totalRegistroPage" (pageChange)="onPageChange($event)"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #modalAgregarOneGrupoProducto let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Asignar Producto</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="getDismissReason(0)"></button>
+    </div>
+    <div class="modal-body" tabindex="-1" role="dialog">
+      <div class="alert alert-danger" *ngIf="errors.length > 0" role="alert">
+        <span *ngFor="let err of errors; let last = last">
+          <span [innerHTML]="'*' + err.mensaje + (last ? '' : '<br>')"></span>
+        </span>
+      </div>
+      <form [formGroup]="formProducto" (ngSubmit)="guardarProducto()">
+        <div formArrayName="productos">
+          <div class="container">
+            <div *ngFor="let producto of productos.controls; let i = index" [formGroupName]="i">
+              <ng-container *ngIf="producto as productoFormGroup">
+                <div class="row d-flex justify-content-around">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="inputCodigo">Codigo Producto</label>
+                      <input type="text" class="form-control" readonly formControlName="cod_product" id="inputCodigo"
+                        [ngClass]="{ 'is-invalid': submitted && productoFormGroup.get('cod_product')?.invalid }" />
+                      <div *ngIf="submitted && productoFormGroup.get('cod_product')?.invalid" class="invalid-feedback">
+                        <div *ngIf="productoFormGroup.get('cod_product')?.hasError('required')">Código es requerido</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="inputNombre">Nombre Producto</label>
+                      <input type="text" class="form-control" formControlName="name_product" id="inputNombre"
+                        [ngClass]="{ 'is-invalid': submitted && productoFormGroup.get('name_product')?.invalid }" />
+                      <div *ngIf="submitted && productoFormGroup.get('name_product')?.invalid" class="invalid-feedback">
+                        <div *ngIf="productoFormGroup.get('name_product')?.hasError('required')">Nombre es requerido</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="inputNombre">Descripción Producto</label>
+                      <input type="text" class="form-control" formControlName="des_product" id="inputNombre"
+                        [ngClass]="{ 'is-invalid': submitted && productoFormGroup.get('des_product')?.invalid }" />
+                      <div *ngIf="submitted && productoFormGroup.get('des_product')?.invalid" class="invalid-feedback">
+                        <div *ngIf="productoFormGroup.get('des_product')?.hasError('required')">Descripción es requerido
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-1">
+                    <div class="form-group">
+                      <button type="button" *ngIf="i !== 0 && productos.controls.length > 0" (click)="eliminarProducto(i)" class="btn w-sm btn-sm btn-outline-danger"
+                        style="margin-top: 25px">
+                        <span><i class="fas fa-trash"></i></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+            <p></p>
+            <button type="button" class="btn btn-outline-success" (click)="addProducto()">Agregar Producto</button>
+            <p></p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" [disabled]="isLoading" class="btn btn-outline-info">
+            <span *ngIf="!isLoading"> Guardar</span>
+            <i *ngIf="isLoading" class="fas fa-spinner fa-pulse fa-1x"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  
+  </ng-template>
+
+  <ng-template #modalAgregarProducto let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Agregar Producto</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="getDismissReason(0)"></button>
+    </div>
+
+    <div class="modal-body" tabindex="-1" role="dialog" >
+      <div class="alert alert-danger" *ngIf="errors.length > 0" role="alert">
+        <span *ngFor="let err of errors; let last = last">
+          <span [innerHTML]="'*' + err.mensaje + (last ? '' : '<br>')"></span>
+        </span>
+      </div>
+      <div>
+        <form [formGroup]="formProductoAll"   [ngClass]="{ 'h-modal': productosAll.controls.length > 3}" (ngSubmit)="guardar()">
+          <div formArrayName="productosAll">
+            <div class="container">
+              <div *ngFor="let producto of productosAll.controls; let i = index" [formGroupName]="i">
+                <ng-container *ngIf="producto as productoFormGroup">
+                  <div class="row d-flex justify-content-around">
+                    <div class="col-md-4">
+                      <div class="custom-dropdown-container">
+                        <div class="form-group">
+                          <label for="inputNombre">Familia</label>
+                          <div class="input-group">
+                            <ng-select [items]="familia" (change)="getLineByIdFamilia($event)" formControlName="familia"
+                              [style.width.px]="400" bindLabel="des_fam" bindValue="id_fam">
+                            </ng-select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="custom-dropdown-container">
+                        <div class="form-group">
+                          <label for="inputNombre">Linea</label>
+                          <div class="input-group">
+                            <ng-select [items]="linea" (change)="getGrupoByIdLinea($event)" formControlName="line"
+                              [style.width.px]="400" bindLabel="des_line" bindValue="id_line">
+                            </ng-select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="custom-dropdown-container">
+                        <div class="form-group">
+                          <label for="inputNombre">Grupo</label>
+                          <div class="input-group">
+                            <ng-select [items]="grupo" formControlName="grupo" (change)="addCodigoProductoAll($event, i)"
+                              [style.width.px]="400" bindLabel="des_gru" bindValue="id_grou">
+                            </ng-select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="inputCodigo">Codigo Producto</label>
+                        <input type="text" class="form-control text-uppercase" readonly formControlName="cod_product"
+                          id="inputCodigo"
+                          [ngClass]="{ 'is-invalid': submitted && productoFormGroup.get('cod_product')?.invalid }" />
+                        <div *ngIf="submitted && productoFormGroup.get('cod_product')?.invalid" class="invalid-feedback">
+                          <div *ngIf="productoFormGroup.get('cod_product')?.hasError('required')">Código es requerido</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="inputNombre">Nombre Producto</label>
+                        <input type="text" class="form-control text-uppercase" formControlName="name_product"
+                          id="inputNombre"
+                          [ngClass]="{ 'is-invalid': submitted && productoFormGroup.get('name_product')?.invalid }" />
+                        <div *ngIf="submitted && productoFormGroup.get('name_product')?.invalid" class="invalid-feedback">
+                          <div *ngIf="productoFormGroup.get('name_product')?.hasError('required')">Nombre es requerido</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="inputNombre">Descripción Producto</label>
+                        <input type="text" class="form-control text-uppercase" formControlName="des_product"
+                          id="inputNombre"
+                          [ngClass]="{ 'is-invalid': submitted && productoFormGroup.get('des_product')?.invalid }" />
+                        <div *ngIf="submitted && productoFormGroup.get('des_product')?.invalid" class="invalid-feedback">
+                          <div *ngIf="productoFormGroup.get('des_product')?.hasError('required')">Descripción es requerido
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group d-flex justify-content-center">
+                    <button type="button" (click)="eliminarProductoAll(i)" class="btn w-sm btn-sm btn-outline-danger"
+                      style="margin-top: 25px">
+                      <span><i class="fas fa-trash"></i></span>
+                    </button>
+                  </div>
+                </ng-container>
+                <hr style="border-radius: 10px solid;">
+              </div>
+              <p></p>
+              <button type="button" class="btn btn-outline-success" (click)="addProductoAll()">Agregar Producto</button>
+              <p></p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" [disabled]="isLoading" class="btn btn-outline-info">
+              <span *ngIf="!isLoading"> Guardar</span>
+              <i *ngIf="isLoading" class="fas fa-spinner fa-pulse fa-1x"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-template>

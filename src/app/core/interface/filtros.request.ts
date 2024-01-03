@@ -5,6 +5,7 @@ export interface Filtros {
     fecha_fin: NgbDateStruct
     famila:string
     linea:string
+    grupo?: string
 }
 export interface FiltrosProducto {
   fecha_ini: NgbDateStruct

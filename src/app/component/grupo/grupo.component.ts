@@ -221,7 +221,11 @@ export class GrupoComponent {
 
   }
   getLineaByIdFamiliaUpdate(event: any) {
-    this.getLineByIdFamilia(event.id_fam);
+    if (event) this.getLineByIdFamilia(event.id_fam);
+    else {
+      this.formFormUpdate.get('id_linea')?.setValue(null);
+      this.linea = []
+    }
   }
   getLineByIdFamilia(id: number) {
     this.lineaService.getByIdFamilia(id).subscribe({
@@ -247,9 +251,7 @@ export class GrupoComponent {
     this.lineaService.getAll(10000, 0, 1).subscribe({
       next: (res: any) => {
         this.lineaFilters = res?.registros;
-        if (this.idGrupo > 0) {
-          this.linea = res?.registros;
-        }
+        this.linea = res?.registros;
       },
       error: (err: any) => {
         this.totastService.error(err)

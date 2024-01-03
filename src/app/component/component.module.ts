@@ -18,10 +18,15 @@ import { ProductoComponent } from './producto/producto.component';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
+import { CrearProductoComponent } from './crear-producto/crear-producto.component';
 const routes: Routes = [
   {
     path: 'admin',
     component: AdminComponent,
+  },
+  {
+    path: 'family',
+    component: FamilyComponent,
   },
   {
     path: 'linea',
@@ -32,12 +37,12 @@ const routes: Routes = [
     component: GrupoComponent,
   },
   {
-    path: 'asignar-product',
-    component: ProductoComponent,
+    path: 'create-product',
+    component: CrearProductoComponent,
   },
   {
-    path: 'family',
-    component: FamilyComponent,
+    path: 'list-product',
+    component: ProductoComponent,
   },
 ];
 @NgModule({
@@ -64,6 +69,7 @@ const routes: Routes = [
     LineaComponent,
     GrupoComponent,
     ProductoComponent,
+    CrearProductoComponent,
   ],
 })
 export class ComponentsModule {}

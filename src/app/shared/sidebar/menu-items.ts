@@ -58,7 +58,7 @@ export const ROUTES: RouteInfo[] = [
     submenu: []
   },
   {
-    path: '/system/component/asignar-product',
+    path: '/system/component/list-product',
     title: 'Listado de Productos',
     icon: 'fas fa-box',
     class: '',
