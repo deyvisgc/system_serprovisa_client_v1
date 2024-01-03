@@ -62,6 +62,7 @@ export class TopSellingComponent implements OnInit {
       type: 'users'
     }
     const navigationExtra: NavigationExtras = {state: obj}
-    this.router.navigate(['system/component/asignar-product/'], navigationExtra)
+    console.log("entro")
+    this.router.navigate(['system/component/list-product/'], navigationExtra)
   }
 }
