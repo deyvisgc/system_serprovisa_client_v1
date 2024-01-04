@@ -17,8 +17,6 @@ import { LineaService } from './../service/linea.service';
 import { FamilyService } from '../service/family.service';
 import * as dayjs from 'dayjs';
 import { Filtros } from 'src/app/core/interface/filtros.request';
-import { TokenService } from 'src/app/util/token.service';
-import { ProductoService } from '../service/producto.service';
 import { AdminService } from '../service/admin.service';
 import { PermisoConstante } from 'src/app/util/ModuloConstante';
 import { CommonService } from 'src/app/core/service/common.service';
@@ -420,6 +418,7 @@ export class GrupoComponent {
   }
   obtenerPermisos() {
     this.adminService.datos$.subscribe(res => {
+      console.log("res: ", res)
       if (res?.length > 0 ) {
         this.permisos = res?.filter((p: any) => p.modulo === PermisoConstante.MODULO_GRUPO)
         this.isRegistrar = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_AGREGAR)

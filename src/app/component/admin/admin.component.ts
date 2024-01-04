@@ -2,7 +2,6 @@ import {
   Component,
   OnInit,
   TemplateRef,
-  ViewChild,
   inject,
 } from '@angular/core';
 import {
@@ -121,13 +120,16 @@ export class AdminComponent implements OnInit {
         });
         this.permisosArray.forEach((item, index) => {
           let permisosCopia = [...permisos];
-          if (item.id !== PermisoConstante.MODULO_GRUPO) {
+          if (item.id !== PermisoConstante.MODULO_PRODUCTO) {
             permisosCopia = this.deleteElements(permisosCopia, 0)
             this.permisosArray[index].permisos = permisosCopia;
-          }  if (item.id === PermisoConstante.MODULO_PRODUCTO) {
-            permisosCopia = this.deleteElements(permisosCopia, PermisoConstante.MODULO_PRODUCTO)
-            this.permisosArray[index].permisos = permisosCopia;
-          } else if (item.id === PermisoConstante.MODULO_GRUPO) {
+          } else if (item.id === PermisoConstante.MODULO_PRODUCTO) {
+            const indexEliminar = permisos.findIndex(
+              (i: any) => i.permission_name === 'ELIMINAR REGISTRO'
+            );
+            if (indexEliminar !== -1) {
+              permisos.splice(indexEliminar, 1);
+            }
             this.permisosArray[index].permisos = permisos;
           }
         });
@@ -147,20 +149,11 @@ export class AdminComponent implements OnInit {
     }
 
     const indexPermisosVer = permisos.findIndex(
-      (i: any) => i.permission_name === 'VER PRODUCTOS'
+      (i: any) => i.permission_name === 'DETALLE PRODUCTO'
     );
-
+    
     if (indexPermisosVer !== -1) {
       permisos.splice(indexPermisosVer, 1);
-    }
-    if (modulo === PermisoConstante.MODULO_PRODUCTO) {
-        const indexEliminar = permisos.findIndex(
-          (i: any) => i.permission_name === 'ELIMINAR REGISTRO'
-        );
-    
-        if (indexEliminar !== -1) {
-          permisos.splice(indexEliminar, 1);
-        }
     }
     return permisos
   }
@@ -234,7 +227,11 @@ export class AdminComponent implements OnInit {
               this.totastService.success(res.message);
             },
             error: (err) => {
-              this.totastService.error(err.error.error);
+              if (err.statusCode === 409) {
+                this.totastService.error(err.error);
+              } else {
+                this.totastService.error(err.message);
+              }
             },
             complete: () => {
               this.getAdmin();
@@ -356,9 +353,9 @@ export class AdminComponent implements OnInit {
       },
       {
         id: 5,
-        descripcion: 'Modulo Asignar Producto',
+        descripcion: 'Modulo Producto',
         permisos: [],
-      },
+      }
     ];
   }
 }

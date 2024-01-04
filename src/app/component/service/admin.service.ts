@@ -47,11 +47,6 @@ export class AdminService {
     return this.http.get<any>(`${UriConstante.ADMIN_RESOURCE}/permisos/${id}`);
   }
   addPermisosObservable(lista: any) {
-    if ( lista?.length > 0) {
-      this.permisos.next(lista);
-    }
-  }
-  obtenerDatos(): any {
-    return this.permisos.value;
+    this.permisos.next(lista);
   }
 }

@@ -44,7 +44,7 @@ export class SidebarComponent implements OnInit {
   getPermisos() {
     const id = this.tokenService.decodeToken().id
     const role = this.tokenService.decodeToken().role
-    if (role !== 1) {
+    if (role == 2) {
       this.adminService.getPermisosById(id).subscribe({
         next: (res) => {
           this.adminService.addPermisosObservable(res)
@@ -52,7 +52,8 @@ export class SidebarComponent implements OnInit {
         error: (err) => {
         }
       })
+    } else {
+      this.adminService.addPermisosObservable([])
     }
-    
   }
 }

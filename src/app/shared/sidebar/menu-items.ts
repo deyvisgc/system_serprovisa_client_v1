@@ -50,7 +50,7 @@ export const ROUTES: RouteInfo[] = [
   },
   {
     path: '/system/component/create-product',
-    title: 'Creaciòn de Productos',
+    title: 'Creación de Productos',
     icon: 'fas fa-layer-group',
     class: '',
     extralink: false,

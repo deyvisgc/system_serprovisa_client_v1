@@ -11,12 +11,11 @@ import {
 import { List } from 'src/app/core/interface/list.';
 import { NotificationService } from 'src/app/core/service/notification.service';
 import Swal from 'sweetalert2';
-import { GrupoRequest } from 'src/app/core/interface/grupo.request';
 import { GrupoService } from '../service/grupo.service';
 import { LineaService } from './../service/linea.service';
 import { FamilyService } from '../service/family.service';
 import * as dayjs from 'dayjs';
-import { Filtros, FiltrosProducto } from 'src/app/core/interface/filtros.request';
+import { FiltrosProducto } from 'src/app/core/interface/filtros.request';
 import { TokenService } from 'src/app/util/token.service';
 import { ProductoRequest } from 'src/app/core/interface/producto.request';
 import { ProductoService } from '../service/producto.service';
@@ -64,7 +63,6 @@ export class CrearProductoComponent {
   permisos: any[] = []
   isRegistrar: boolean = true
   isActualizar: boolean = true
-  isEliminar: boolean = true
   isVerProductos: boolean = true
   isAsignarProductos: boolean = true
   filtros: FiltrosProducto = {
@@ -93,9 +91,6 @@ export class CrearProductoComponent {
   codGrupoTemp: string = '';
   codigoProducts: any[] = [];
   url: any;
-  isEliminarFirst = false
-  isIndexFirst = 0
-
   constructor(
     private lineaService: LineaService,
     private familaService: FamilyService,
@@ -346,7 +341,6 @@ export class CrearProductoComponent {
   }
   eliminarProducto(index: number, ) {
     this.productos.removeAt(index);
-    this.isEliminarFirst = true
     this.ajustarCorrelativos()
   }
   ajustarCorrelativos(): void {
@@ -565,10 +559,9 @@ export class CrearProductoComponent {
   obtenerPermisos() {
     this.adminService.datos$.subscribe(res => {
       if (res?.length > 0 ) {
-        this.permisos = res?.filter((p: any) => p.modulo === PermisoConstante.MODULO_GRUPO)
+        this.permisos = res?.filter((p: any) => p.modulo === PermisoConstante.MODULO_PRODUCTO)
         this.isRegistrar = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_AGREGAR)
         this.isActualizar = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_ACTUALIZAR)
-        this.isEliminar = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_ELIMINAR)
         this.isAsignarProductos = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_ASIGNAR_PRODUCTO)
         this.isVerProductos = this.permisos?.some(per => per.permission_id === PermisoConstante.PERMISO_VER_PRODUCTO)
       }
