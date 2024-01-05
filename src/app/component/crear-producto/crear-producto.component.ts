@@ -175,9 +175,7 @@ export class CrearProductoComponent {
         return;
       }
       this.isLoading = true
-      const producto = this.formProductoAll.value
-        .productos as ProductoRequest[];
-
+      const producto = this.formProductoAll.value.productosAll as ProductoRequest[];
       this.productoService.registerMaivo(producto).subscribe({
         next: (res: any) => {
           this.totastService.success(res.message);
