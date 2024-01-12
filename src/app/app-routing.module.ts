@@ -1,33 +1,3 @@
-// import { NgModule } from '@angular/core';
-// import { Routes, RouterModule } from '@angular/router';
-
-// import { FullComponent } from './layouts/full/full.component';
-
-// export const Approutes: Routes = [
-//   {
-//     path: '',
-//     component: FullComponent,
-//     children: [
-//       { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-//       {
-//         path: 'dashboard',
-//         loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule)
-//       },
-//       {
-//         path: 'about',
-//         loadChildren: () => import('./about/about.module').then(m => m.AboutModule)
-//       },
-//       {
-//         path: 'component',
-//         loadChildren: () => import('./component/component.module_v1').then(m => m.ComponentsModule)
-//       }
-//     ]
-//   },
-//   {
-//     path: '**',
-//     redirectTo: '/starter'
-//   }
-// ];
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
@@ -44,7 +14,6 @@ export const Approutes: Routes = [
     path: 'system',
     component: FullComponent,
     children: [
-      { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
       {
         path: 'dashboard',
         loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule)
@@ -55,8 +24,5 @@ export const Approutes: Routes = [
       }
     ]
   },
-  {
-    path: '**',
-    redirectTo: '/login'
-  }
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];

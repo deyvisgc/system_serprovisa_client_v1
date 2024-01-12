@@ -141,7 +141,7 @@ export class AdminComponent implements OnInit {
   }
   private deleteElements(permisos: any[], modulo: number) {
     const indexPermisosAsignar = permisos.findIndex(
-      (i: any) => i.permission_name === 'ASIGNAR PRODUCTOS'
+      (i: any) => i.permission_name === 'ASIGNAR PRODUCTO'
     );
 
     if (indexPermisosAsignar !== -1) {

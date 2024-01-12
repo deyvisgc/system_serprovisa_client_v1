@@ -376,6 +376,7 @@ export class CrearProductoComponent {
     switch (reason) {
       case ModalDismissReasons.BACKDROP_CLICK:
         this.productos.clear();
+        this.productosAll.clear()
         this.errors = [];
         this.modalService.dismissAll();
         return 'by clicking on a backdrop';
