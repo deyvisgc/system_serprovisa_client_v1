@@ -65,6 +65,8 @@ export class CrearProductoComponent {
   isActualizar: boolean = true
   isVerProductos: boolean = true
   isAsignarProductos: boolean = true
+  pageSizeOptions = [10, 25, 50, 100, "Todos"]; // Lista de opciones
+  selectedPageSize: any = 10; // Valor inicial
   filtros: FiltrosProducto = {
     fecha_ini: {
       year: dayjs().subtract(1, 'month').year(),
@@ -81,6 +83,13 @@ export class CrearProductoComponent {
     grupo: '',
     user: '',
   };
+  actualizarPaginacion(): void {
+    this.limit = this.selectedPageSize
+    if (this.selectedPageSize === "Todos") {
+      this.limit = 999999999
+    }
+    this.getList(this.limit, this.offset, this.currentPage);
+  }
   lineaFilter: any[] = [];
   grupo: any[] = [];
   familiaFilters: any[] = [];

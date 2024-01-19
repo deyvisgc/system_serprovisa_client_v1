@@ -57,6 +57,8 @@ export class ProductoComponent implements OnInit {
   isCollapsed = true;
   idProducto = 0;
   url: any;
+  pageSizeOptions = [10, 25, 50, 100, "Todos"]; // Lista de opciones
+  selectedPageSize: any = 10; // Valor inicial
   filtros: FiltrosProducto = {
     fecha_ini: {
       year: dayjs().subtract(1, 'month').year(),
@@ -108,6 +110,14 @@ export class ProductoComponent implements OnInit {
     this.getFamilia();
     this.getGrupo();
     this.getResponsable();
+  }
+  actualizarPaginacion(): void {
+    this.limit = this.selectedPageSize
+    if (this.selectedPageSize === "Todos") {
+      console.log(this.selectedPageSize)
+      this.limit = 999999999
+    }
+    this.getList(this.limit, this.offset, this.currentPage);
   }
   open(content: TemplateRef<any>) {
     const opcionesModal: NgbModalOptions = {

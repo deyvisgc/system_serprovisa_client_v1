@@ -5,7 +5,7 @@
     <div class="card" >
       <div class="card-body" style="background-color: #fff;">
 
-        <h4 class="card-title">Listado de Responsables</h4>
+        <h4 class="card-title">Listado de Usuarios</h4>
         <p></p>
         <p></p>
         <div class="d-flex justify-content-between" >
@@ -15,7 +15,15 @@
           <button class="btn btn-outline-info btn-group-lg btn-sm" (click)="open(content)">Nuevo <i
               class="fas fa-plus"></i></button>
         </div>
-        <div class="table-responsive mt-5">
+        <div class="table-responsive mt-3">
+          <div>
+            <span style="font-weight: 500;">mostrar 
+            <select id="pageSize" [(ngModel)]="selectedPageSize" (change)="actualizarPaginacion()">
+            <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+            </select>
+            Entradas
+            </span>
+         </div>
           <table class="table align-middle text-nowrap ">
             <thead>
               <tr>
@@ -49,12 +57,11 @@
                     </button>
                   </td>
                 </tr>
-
               </ng-container>
             </tbody>
           </table>
           <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalRegistros]="totalRegistros"
-            [totalRegistrosPage]="totalRegistroPage" [totalRegistrosAcomulado]="totalRegistrosAcomulado" (pageChange)="onPageChange($event)"></app-pagination>
+            [totalRegistrosPage]="totalRegistroPage" [totalRegistrosAcomulado]="totalRegistrosAcomulado" [limit]="limit" (pageChange)="onPageChange($event)"></app-pagination>
         </div>
       </div>
     </div>

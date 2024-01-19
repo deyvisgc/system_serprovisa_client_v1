@@ -11,13 +11,13 @@ export class PaginationComponent implements OnInit{
   @Input() totalRegistros: number;
   @Input() totalRegistrosPage: number;
   @Input() totalRegistrosAcomulado: number;
+  @Input() limit: number;
   @Output() pageChange = new EventEmitter<{
     page: number;
     limit: number;
     offset: number;
   }>();
-
-  limit: number = 10; // número máximo de elementos por página
+  // número máximo de elementos por página
   offset: number; // número de elementos que se deben omitir
   constructor() {
   

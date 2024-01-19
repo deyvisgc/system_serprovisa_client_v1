@@ -26,6 +26,8 @@ export class FamilyComponent {
   isLoading = false;
   totalRegistros = 0;
   totalRegistroPage = 0;
+  pageSizeOptions = [10, 25, 50, 100, "Todos"]; // Lista de opciones
+  selectedPageSize: any = 10; // Valor inicial
   limit = 10;
   offset = 0;
   currentPage: number = 1;
@@ -54,7 +56,14 @@ export class FamilyComponent {
     this.agregarFamilia();
 
   }
-
+  actualizarPaginacion(): void {
+    this.limit = this.selectedPageSize
+    if (this.selectedPageSize === "Todos") {
+      console.log(this.selectedPageSize)
+      this.limit = 999999999
+    }
+    this.getList(this.limit, this.offset, this.currentPage);
+  }
   inicializarFormulario() {
     this.formForm = this.formBuilder.group({
       familias: this.formBuilder.array([]),

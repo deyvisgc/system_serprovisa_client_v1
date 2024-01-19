@@ -43,6 +43,8 @@ export class LineaComponent {
   isActualizar: boolean = true
   isEliminar: boolean = true
   permisos: any[] = []
+  pageSizeOptions = [10, 25, 50, 100, "Todos"]; // Lista de opciones
+  selectedPageSize: any = 10; // Valor inicial
   constructor(
     private lineaService: LineaService,
     private familiaService: FamilyService,
@@ -60,6 +62,14 @@ export class LineaComponent {
     this.getFamilia();
     this.inicializarFormulario();
     this.agregarLinea();
+  }
+  actualizarPaginacion(): void {
+    this.limit = this.selectedPageSize
+    if (this.selectedPageSize === "Todos") {
+      console.log(this.selectedPageSize)
+      this.limit = 999999999
+    }
+    this.getList(this.limit, this.offset, this.currentPage);
   }
   inicializarFormulario() {
     this.formForm = this.formBuilder.group({

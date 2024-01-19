@@ -82,6 +82,14 @@
           </div>
         </div>
         <div class="table-responsive">
+          <div style="margin-top: 20px;">
+            <span style="font-weight: 500;">mostrar 
+            <select id="pageSize" [(ngModel)]="selectedPageSize" (change)="actualizarPaginacion()">
+            <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+            </select>
+            Entradas
+            </span>
+         </div>
           <table class="table align-middle text-nowrap">
             <thead>
               <tr>
@@ -124,7 +132,7 @@
             </tbody>
           </table>
           <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalRegistros]="totalRegistros"
-            [totalRegistrosPage]="totalRegistroPage" (pageChange)="onPageChange($event)"></app-pagination>
+            [totalRegistrosPage]="totalRegistroPage" [limit]="limit" (pageChange)="onPageChange($event)"></app-pagination>
         </div>
       </div>
     </div>

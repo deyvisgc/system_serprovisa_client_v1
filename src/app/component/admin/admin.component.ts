@@ -42,6 +42,8 @@ export class AdminComponent implements OnInit {
   isLoading = false;
   totalRegistros = 0;
   totalRegistroPage = 0;
+  pageSizeOptions = [10, 25, 50, 100, "Todos"]; // Lista de opciones
+  selectedPageSize: any = 10; // Valor inicial
   limit = 10;
   offset = 0;
   currentPage: number = 1;
@@ -79,6 +81,13 @@ export class AdminComponent implements OnInit {
       name: [null, [Validators.required]],
       id_rol: [null, [Validators.required]],
     });
+  }
+  actualizarPaginacion(): void {
+    this.limit = this.selectedPageSize
+    if (this.selectedPageSize === "Todos") {
+      this.limit = 999999999
+    }
+    this.getList(this.limit, this.offset, this.currentPage);
   }
   open(content: TemplateRef<any>) {
     this.modalService.open(content, {
